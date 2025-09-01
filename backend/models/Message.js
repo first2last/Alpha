@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema({
-  chatId: {
+  chat: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Chat',
     required: true
@@ -13,32 +13,44 @@ const messageSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    required: true
+    trim: true
   },
   messageType: {
     type: String,
-    enum: ['text', 'image', 'video', 'audio', 'file'],
+    enum: ['text', 'image', 'video', 'file'],
     default: 'text'
   },
   fileUrl: {
-    type: String,
-    default: null
+    type: String
   },
   fileName: {
-    type: String,
-    default: null
+    type: String
   },
   fileSize: {
-    type: Number,
-    default: null
+    type: Number
   },
-  status: {
-    type: String,
-    enum: ['sending', 'sent', 'delivered', 'read'],
-    default: 'sent'
+  readBy: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    readAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  isEdited: {
+    type: Boolean,
+    default: false
+  },
+  editedAt: {
+    type: Date
   }
 }, {
   timestamps: true
 });
+
+// Index for better query performance
+messageSchema.index({ chat: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Message', messageSchema);

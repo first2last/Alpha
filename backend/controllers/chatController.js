@@ -118,31 +118,21 @@ exports.sendMessage = async (req, res) => {
     const { chatId, content, messageType } = req.body;
     const userId = req.user.id;
 
-    console.log('Received message data:', { chatId, content, messageType }); // Debug log
-
-    // Validate required fields
-    if (!chatId) {
-      return res.status(400).json({ success: false, message: 'chatId is required' });
-    }
-
-    if (!content || content.trim() === '') {
-      return res.status(400).json({ success: false, message: 'Content is required' });
-    }
-
     // Security Check: Ensure the user is a participant of the chat
     const chat = await Chat.findOne({
-      _id: chatId,
-      participants: userId
+        _id: chatId,
+        participants: userId
     });
 
     if (!chat) {
-      return res.status(404).json({ success: false, message: 'Chat not found or you are not a member' });
+        return res.status(404).json({ success: false, message: 'Chat not found or you are not a member' });
     }
 
     let messageData = {
-      chatId: chatId,  // ← Use only 'chatId' (remove the 'chat' field)
+      chatId, // Mongoose uses 'chatId', but schema might be 'chat'. Let's stick to chatId from body.
+      chat: chatId, // Assuming schema field is 'chat'
       sender: userId,
-      content: content.trim(),
+      content: content || '',
       messageType: messageType || 'text'
     };
 
@@ -156,36 +146,28 @@ exports.sendMessage = async (req, res) => {
       messageData.fileUrl = uploadResult.secure_url;
       messageData.fileName = req.file.originalname;
       messageData.fileSize = req.file.size;
-      
+      // For file messages, content can be the URL or an optional caption. Let's keep it flexible.
       if (!messageData.content) {
         messageData.content = uploadResult.secure_url;
       }
     }
 
-    console.log('Creating message with data:', messageData); // Debug log
-
     const message = new Message(messageData);
     await message.save();
     await message.populate('sender', 'name email avatar');
 
-    // Update the chat's last message
+    // Update the chat's last message atomically
     chat.lastMessage = message._id;
     chat.lastMessageAt = new Date();
     await chat.save();
-
-    console.log('Message created successfully:', message._id);
 
     res.status(201).json({ success: true, message });
 
   } catch (error) {
     console.error('Send message error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: error.message || 'Failed to send message' 
-    });
+    res.status(500).json({ success: false, message: 'Failed to send message' });
   }
 };
-
 
 /**
  * @desc Delete a message sent by the user

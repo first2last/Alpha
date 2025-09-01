@@ -389,7 +389,7 @@ const ChatWindow = ({
       <MessageInput
         onSendMessage={onSendMessage}
         socket={socket}
-        chatId={chatId}
+        chatId={chat._id}
         disabled={false}
       />
 
