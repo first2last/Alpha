@@ -139,21 +139,8 @@ const LoginPage = () => {
                   ))}
                 </Grid>
 
-                {/* Stats */}
-                <Box sx={{ display: 'flex', gap: 4, justifyContent: { xs: 'center', lg: 'flex-start' } }}>
-                  <Box textAlign="center">
-                    <Typography variant="h3" fontWeight="bold">1M+</Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.8 }}>Active Users</Typography>
-                  </Box>
-                  <Box textAlign="center">
-                    <Typography variant="h3" fontWeight="bold">99.9%</Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.8 }}>Uptime</Typography>
-                  </Box>
-                  <Box textAlign="center">
-                    <Typography variant="h3" fontWeight="bold">24/7</Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.8 }}>Support</Typography>
-                  </Box>
-                </Box>
+                
+               
               </Box>
             </Fade>
           </Grid>
