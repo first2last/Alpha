@@ -22,7 +22,10 @@ const server = http.createServer(app);
 // Socket.io configuration
 const io = socketIo(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+     origin: [
+    'http://localhost:3000',
+    'https://alpha-theta-pearl.vercel.app'  // Add your actual Vercel URL
+  ],
     methods: ["GET", "POST"]
   }
 });
@@ -47,7 +50,10 @@ app.use(limiter);
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+ origin: [
+    'http://localhost:3000',
+    'https://alpha-theta-pearl.vercel.app'  // Add your actual Vercel URL
+  ],
   credentials: true
 }));
 
